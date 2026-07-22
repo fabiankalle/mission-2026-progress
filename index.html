@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#0b0f14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mission 2026" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <title>Mission 2026 Progress</title>
+  <style>
+    :root{
+      --bg:#0b0f14;--panel:#131922;--panel2:#19212c;--text:#f4f7fb;--muted:#93a0b3;
+      --accent:#7cf29a;--accent2:#63b3ff;--danger:#ff6b78;--line:#263142;--shadow:0 14px 42px rgba(0,0,0,.28);
+      --radius:22px;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px)
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+    body{padding-top:var(--safe-top);padding-bottom:calc(84px + var(--safe-bottom))}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:760px;margin:0 auto;padding:18px 16px 36px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+    .brand small{display:block;color:var(--accent);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:11px}
+    .brand h1{font-size:24px;line-height:1.08;margin:4px 0 0}
+    .date-pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:9px 12px;color:var(--muted);font-size:13px;white-space:nowrap}
+    .page{display:none}.page.active{display:block}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 8px 26px rgba(0,0,0,.14)}
+    .metric-label{color:var(--muted);font-size:12px;margin-bottom:7px}.metric-value{font-size:22px;font-weight:850;letter-spacing:-.03em}.metric-sub{color:var(--muted);font-size:11px;margin-top:3px}
+    .section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:24px 2px 10px}.section-title h2{font-size:18px;margin:0}.section-title span{color:var(--muted);font-size:12px}
+    .form-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    label{display:block;color:var(--muted);font-size:12px;font-weight:700;margin-bottom:6px}
+    input,select,textarea{width:100%;border:1px solid var(--line);background:#0f151d;color:var(--text);border-radius:14px;padding:13px 12px;outline:none}
+    input:focus,select:focus,textarea:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(99,179,255,.12)}
+    textarea{min-height:88px;resize:vertical}.full{grid-column:1/-1}
+    .btn{border:0;border-radius:15px;padding:14px 16px;font-weight:850;color:#07130a;background:var(--accent);width:100%;box-shadow:0 8px 24px rgba(124,242,154,.18)}
+    .btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line);box-shadow:none}.btn.danger{background:rgba(255,107,120,.12);color:#ff9aa4;border:1px solid rgba(255,107,120,.3);box-shadow:none}
+    .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.toast{position:fixed;left:50%;bottom:calc(94px + var(--safe-bottom));transform:translateX(-50%) translateY(20px);background:#f4f7fb;color:#111820;padding:11px 16px;border-radius:999px;font-weight:800;font-size:13px;opacity:0;pointer-events:none;transition:.22s;z-index:40;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .bottom-nav{position:fixed;left:0;right:0;bottom:0;background:rgba(11,15,20,.92);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px 10px calc(8px + var(--safe-bottom));z-index:30}
+    .nav-inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.nav-btn{border:0;background:transparent;color:var(--muted);padding:8px 4px;border-radius:13px;font-size:11px;font-weight:750}.nav-btn .ico{display:block;font-size:21px;margin-bottom:3px}.nav-btn.active{color:var(--accent);background:rgba(124,242,154,.08)}
+    .progress-wrap{height:8px;background:#0e141c;border-radius:999px;overflow:hidden;margin-top:10px}.progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;border-radius:999px;transition:.35s}
+    .workout-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.chip{background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:13px;padding:11px 8px;font-weight:800}.chip.active{background:rgba(124,242,154,.1);border-color:rgba(124,242,154,.45);color:var(--accent)}
+    .exercise{background:var(--panel);border:1px solid var(--line);border-radius:18px;margin-bottom:10px;overflow:hidden}.exercise-head{padding:14px;display:flex;justify-content:space-between;gap:12px;align-items:center}.exercise-name{font-weight:850;font-size:14px}.exercise-target{color:var(--muted);font-size:11px;margin-top:3px}.sets{border-top:1px solid var(--line);padding:10px}.set-row{display:grid;grid-template-columns:32px 1fr 1fr 40px;gap:8px;align-items:center;margin-bottom:8px}.set-row:last-child{margin-bottom:0}.set-num{color:var(--muted);font-size:12px;text-align:center}.set-row input{padding:10px 8px;text-align:center}.check{height:38px;border-radius:11px;border:1px solid var(--line);background:#0f151d;color:var(--muted);font-weight:900}.check.done{background:var(--accent);color:#07130a;border-color:var(--accent)}
+    .legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin:7px 2px 0}.legend b{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;background:var(--accent2)}.legend b.avg{background:var(--accent)}
+    .chart-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:12px}.chart{width:100%;height:250px;display:block}
+    .empty{color:var(--muted);text-align:center;padding:34px 12px}.history-item{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px 2px;border-bottom:1px solid var(--line)}.history-item:last-child{border-bottom:0}.history-date{font-weight:800}.history-meta{color:var(--muted);font-size:12px;margin-top:3px}.history-value{text-align:right;font-weight:850}
+    .status-good{color:var(--accent)}.status-bad{color:var(--danger)}.small-note{font-size:12px;color:var(--muted);line-height:1.5}.install-banner{display:none;background:rgba(99,179,255,.09);border:1px solid rgba(99,179,255,.28);border-radius:18px;padding:13px 14px;margin-bottom:14px;color:#cbe5ff;font-size:13px;line-height:1.45}.install-banner.show{display:block}
+    .divider{height:1px;background:var(--line);margin:16px 0}.file-input{display:none}.version{color:var(--muted);font-size:11px;text-align:center;margin-top:20px}
+    .habit-toggle{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0;padding:14px;border:1px solid var(--line);background:#0f151d;border-radius:16px;color:var(--text);cursor:pointer}
+    .habit-copy{display:flex;flex-direction:column;gap:3px}.habit-title{font-size:14px;font-weight:850}.habit-sub{font-size:11px;color:var(--muted);font-weight:500}.habit-toggle input{position:absolute;opacity:0;pointer-events:none;width:auto}.habit-check{display:grid;place-items:center;flex:0 0 42px;height:42px;border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:transparent;font-size:22px;font-weight:950;transition:.18s}.habit-toggle input:checked + .habit-check{background:var(--accent);border-color:var(--accent);color:#07130a;box-shadow:0 8px 22px rgba(124,242,154,.17)}
+    @media(max-width:520px){.grid.three{grid-template-columns:1fr 1fr}.grid.three .card:last-child{grid-column:1/-1}.form-grid{grid-template-columns:1fr 1fr}.topbar{align-items:flex-start}.date-pill{font-size:11px}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <div class="brand"><small>Mission 2026</small><h1>Daily Progress</h1></div>
+      <div class="date-pill" id="todayLabel"></div>
+    </div>
+
+    <div id="installBanner" class="install-banner">Auf dem iPhone: In Safari unten auf <b>Teilen</b> tippen → <b>Zum Home-Bildschirm</b>. Dann läuft die Seite wie eine eigenständige App.</div>
+
+    <section id="page-today" class="page active">
+
+      <div class="grid three">
+        <div class="card"><div class="metric-label">7-Tage-Gewicht</div><div class="metric-value" id="weekWeight">–</div><div class="metric-sub" id="weekWeightTrend">Noch keine Daten</div></div>
+        <div class="card"><div class="metric-label">Cardio diese Woche</div><div class="metric-value"><span id="weekCardio">0</span> min</div><div class="progress-wrap"><div class="progress-bar" id="cardioBar"></div></div></div>
+        <div class="card"><div class="metric-label">Training diese Woche</div><div class="metric-value"><span id="weekWorkouts">0</span> / 3</div><div class="metric-sub">Gym A · Home · Gym B</div></div>
+      </div>
+
+      <div class="section-title"><h2>Heutiger Check-in</h2><span id="saveState">noch nicht gespeichert</span></div>
+      <div class="form-card">
+        <div class="form-grid">
+          <div><label for="weight">Gewicht (kg)</label><input id="weight" type="number" inputmode="decimal" step="0.05" placeholder="z. B. 94,80"></div>
+          <div><label for="calories">Kalorien</label><input id="calories" type="number" inputmode="numeric" placeholder="2300"></div>
+          <div><label for="protein">Protein (g)</label><input id="protein" type="number" inputmode="numeric" placeholder="200"></div>
+          <div><label for="cardio">Cardio (Min.)</label><input id="cardio" type="number" inputmode="numeric" placeholder="30"></div>
+          <div><label for="sleep">Schlaf (Std.)</label><input id="sleep" type="number" inputmode="decimal" step="0.25" placeholder="7,0"></div>
+          <div><label for="steps">Schritte</label><input id="steps" type="number" inputmode="numeric" placeholder="8000"></div>
+          <div class="full"><label for="workoutSelect">Training</label><select id="workoutSelect"><option value="Rest">Ruhetag</option><option value="Gym A">Gym A</option><option value="Home">Zuhause</option><option value="Gym B">Gym B</option><option value="Cardio">Nur Cardio</option></select></div>
+          <label class="habit-toggle" for="creatine"><span class="habit-copy"><span class="habit-title">Creatin genommen</span><span class="habit-sub">Täglichen Haken setzen – unabhängig von der Uhrzeit.</span></span><input id="creatine" type="checkbox"><span class="habit-check">✓</span></label>
+          <div class="full"><label for="notes">Notizen</label><textarea id="notes" placeholder="Energie, Hunger, Schicht, Leistung, Besonderheiten …"></textarea></div>
+        </div>
+        <button class="btn" id="saveDailyBtn">Tag speichern</button>
+      </div>
+
+    </section>
+
+    <section id="page-training" class="page">
+      <div class="section-title"><h2>Training loggen</h2><span>rechte Seite zuerst</span></div>
+      <div class="workout-tabs"><button class="chip active" data-workout="Gym A">Gym A</button><button class="chip" data-workout="Home">Zuhause</button><button class="chip" data-workout="Gym B">Gym B</button></div>
+      <div id="exerciseList"></div>
+      <button class="btn" id="saveWorkoutBtn">Training speichern</button>
+      <p class="small-note">Bei einarmigen Übungen: rechts beginnen, links dieselben Wiederholungen und dasselbe Gewicht. Hauptübungen meist 1–2 RIR, Isolationen 0–2 RIR.</p>
+    </section>
+
+    <section id="page-progress" class="page">
+      <div class="section-title"><h2>Gewichtsverlauf</h2><span>täglich + 7-Tage-Mittel</span></div>
+      <div class="chart-card"><canvas id="weightChart" class="chart"></canvas><div class="legend"><span><b></b>Tagesgewicht</span><span><b class="avg"></b>7-Tage-Mittel</span></div></div>
+
+      <div class="grid">
+        <div class="card"><div class="metric-label">Aktuelles Gewicht</div><div class="metric-value" id="latestWeight">–</div><div class="metric-sub" id="weightChange30">30-Tage-Veränderung</div></div>
+        <div class="card"><div class="metric-label">Creatin diese Woche</div><div class="metric-value" id="creatineWeek">0 / 7</div><div class="metric-sub" id="creatineToday">Heute noch offen</div></div>
+      </div>
+
+      <div class="section-title"><h2>Letzte Einträge</h2><span>antippen nicht nötig – editierbar über Heute</span></div>
+      <div class="form-card" id="historyList"></div>
+    </section>
+
+    <section id="page-data" class="page">
+      <div class="section-title"><h2>Ziele</h2><span>jederzeit anpassbar</span></div>
+      <div class="form-card">
+        <div class="form-grid">
+          <div><label for="targetCalories">Kalorienziel</label><input id="targetCalories" type="number" inputmode="numeric"></div>
+          <div><label for="targetProtein">Proteinziel (g)</label><input id="targetProtein" type="number" inputmode="numeric"></div>
+          <div><label for="targetCardio">Cardio-Ziel/Woche (Min.)</label><input id="targetCardio" type="number" inputmode="numeric"></div>
+          <div><label for="goalWeight">Zielgewicht (kg)</label><input id="goalWeight" type="number" inputmode="decimal" step="0.1"></div>
+        </div>
+        <button class="btn" id="saveSettingsBtn">Ziele speichern</button>
+      </div>
+
+      <div class="section-title"><h2>Backup</h2><span>wichtig bei lokal gespeicherten Daten</span></div>
+      <div class="form-card">
+        <p class="small-note">Alle Einträge liegen nur in diesem Browser auf diesem Gerät. Exportiere regelmäßig ein Backup. Beim Löschen der Safari-Websitedaten können lokale Einträge verloren gehen.</p>
+        <div class="btn-row"><button class="btn secondary" id="exportBtn">Backup exportieren</button><button class="btn secondary" id="importBtn">Backup importieren</button></div>
+        <input type="file" id="importFile" class="file-input" accept="application/json">
+        <div class="divider"></div>
+        <button class="btn danger" id="resetBtn">Alle Daten löschen</button>
+      </div>
+      <div class="version">Mission 2026 Progress · Version 1.2 · offlinefähig</div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav"><div class="nav-inner">
+    <button class="nav-btn active" data-page="today"><span class="ico">◉</span>Heute</button>
+    <button class="nav-btn" data-page="training"><span class="ico">◆</span>Training</button>
+    <button class="nav-btn" data-page="progress"><span class="ico">↗</span>Verlauf</button>
+    <button class="nav-btn" data-page="data"><span class="ico">⚙</span>Daten</button>
+  </div></nav>
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const STORAGE_KEY = 'mission2026ProgressV1';
+  const HISTORICAL_WEIGHT_SEED = 'historicalWeights2026v1';
+  const isoToday = () => new Date().toLocaleDateString('en-CA');
+  const historicalDaily = {
+    '2026-06-08':{weight:101.10},
+    '2026-06-09':{weight:99.35},
+    '2026-06-10':{weight:99.50},
+    '2026-06-11':{weight:98.75},
+    '2026-06-12':{weight:98.50},
+    '2026-06-15':{weight:98.95},
+    '2026-06-16':{weight:97.80},
+    '2026-06-17':{weight:98.40},
+    '2026-06-19':{weight:98.40},
+    '2026-06-20':{weight:97.60},
+    '2026-06-21':{weight:98.45},
+    '2026-06-23':{weight:98.00},
+    '2026-06-24':{weight:97.15},
+    '2026-06-25':{weight:98.15},
+    '2026-06-26':{weight:98.25},
+    '2026-06-27':{weight:97.40},
+    '2026-06-28':{weight:96.65},
+    '2026-06-29':{weight:97.65},
+    '2026-06-30':{weight:97.30},
+    '2026-07-01':{weight:96.20},
+    '2026-07-02':{weight:95.45},
+    '2026-07-03':{weight:95.55},
+    '2026-07-05':{weight:96.95},
+    '2026-07-06':{weight:95.40},
+    '2026-07-07':{weight:97.00},
+    '2026-07-08':{weight:96.50},
+    '2026-07-09':{weight:95.95},
+    '2026-07-10':{weight:95.20},
+    '2026-07-11':{weight:95.90},
+    '2026-07-12':{weight:null,notes:'Vergessen zu wiegen'},
+    '2026-07-13':{weight:95.70},
+    '2026-07-14':{weight:94.70},
+    '2026-07-15':{weight:94.60},
+    '2026-07-16':{weight:null,notes:'Geburtstag – nicht gewogen'},
+    '2026-07-17':{weight:96.55},
+    '2026-07-21':{weight:94.85}
+  };
+  const defaultState = {
+    settings:{targetCalories:2300,targetProtein:200,targetCardio:125,goalWeight:90},
+    daily:{}, workouts:[], meta:{historicalWeights2026v1:false}
+  };
+  const initialState = () => ({
+    ...structuredClone(defaultState),
+    daily:structuredClone(historicalDaily),
+    meta:{historicalWeights2026v1:true}
+  });
+  const workoutTemplates = {
+    'Gym A':[
+      ['Konvergierende Brustpresse','3 × 6–10',3],
+      ['Enger neutraler MAG-Latzug','3 × 8–12',3],
+      ['Enges Kabelrudern mit neutralem MAG-Griff','3 × 8–12',3],
+      ['Schulterpressmaschine','2 × 6–10',2],
+      ['Einarmiges Kabel-Seitheben','3 × 12–20 je Seite',3],
+      ['Einarmiger Preacher-Curl','3 × 8–15 je Arm',3],
+      ['Einarmiges Überkopf-Trizepsstrecken','3 × 10–15 je Arm',3],
+      ['Beinpresse','2–3 × 8–15',3]
+    ],
+    'Home':[
+      ['Bandunterstützte Klimmzüge','2 × 6–12',2],
+      ['Dips oder Band-Liegestütze','2 × 8–15',2],
+      ['Einarmiges Band-Seitheben','3 × 15–30 je Seite',3],
+      ['Band-Reverse-Flys','2 × 15–30',2],
+      ['Einarmiger Band-Curl','2 × 12–25 je Arm',2],
+      ['Einarmiges Überkopf-Trizepsstrecken','2 × 12–25 je Arm',2],
+      ['Bulgarian Split Squats','2 × 8–20 je Bein',2]
+    ],
+    'Gym B':[
+      ['Schrägbrustpressmaschine','3 × 8–12',3],
+      ['Einarmige High Row','3 × 8–15 je Seite',3],
+      ['Brustgestütztes Rudern mit mittlerem Griff','3 × 8–12',3],
+      ['Seitheben-Maschine','3 × 12–20',3],
+      ['Reverse-Fly-Maschine','2 × 12–20',2],
+      ['Einarmiger Bayesian Cable Curl','3 × 10–15 je Arm',3],
+      ['Einarmiges Kabel-Pushdown','3 × 10–15 je Arm',3],
+      ['Sitzender Beinbeuger','3 × 10–15',3],
+      ['Beinstrecker (optional)','2 × 10–15',2]
+    ]
+  };
+  let state = loadState();
+  let activeWorkout = 'Gym A';
+
+  function loadState(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if(!saved) return initialState();
+      const {arms: _removedArms, ...cleaned} = saved;
+      const {weddingDate: _removedWeddingDate, ...cleanSettings} = cleaned.settings || {};
+      const merged = {
+        ...defaultState,
+        ...cleaned,
+        settings:{...defaultState.settings,...cleanSettings},
+        daily:{...(cleaned.daily||{})},
+        meta:{...defaultState.meta,...(cleaned.meta||{})}
+      };
+      if(!merged.meta[HISTORICAL_WEIGHT_SEED]){
+        merged.daily={...structuredClone(historicalDaily),...merged.daily};
+        merged.meta[HISTORICAL_WEIGHT_SEED]=true;
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
+      }
+      return merged;
+    }catch(e){ return initialState(); }
+  }
+  function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+  function num(v){if(v===''||v==null)return null;const n=Number(String(v).replace(',','.'));return Number.isFinite(n)?n:null;}
+  function fmt(n,d=1){return n==null?'–':n.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});}
+  function parseDate(s){return new Date(s+'T12:00:00');}
+  function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800);}
+  function startOfWeek(d=new Date()){const x=new Date(d);const day=(x.getDay()+6)%7;x.setHours(0,0,0,0);x.setDate(x.getDate()-day);return x;}
+
+  function init(){
+    document.getElementById('todayLabel').textContent=new Intl.DateTimeFormat('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'}).format(new Date());
+    if(!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) document.getElementById('installBanner').classList.add('show');
+    bindNav();bindActions();loadTodayForm();loadSettings();renderWorkout();refreshAll();
+    if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
+  function bindNav(){document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-btn').forEach(x=>x.classList.toggle('active',x===btn));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+btn.dataset.page).classList.add('active');
+    if(btn.dataset.page==='progress') setTimeout(drawWeightChart,50);
+  }));}
+  function bindActions(){
+    document.getElementById('saveDailyBtn').onclick=saveDaily;
+    document.getElementById('saveWorkoutBtn').onclick=saveWorkout;
+    document.getElementById('saveSettingsBtn').onclick=saveSettings;
+    document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{activeWorkout=c.dataset.workout;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x===c));renderWorkout();});
+    document.getElementById('exportBtn').onclick=exportData;
+    document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+    document.getElementById('importFile').onchange=importData;
+    document.getElementById('resetBtn').onclick=resetData;
+    window.addEventListener('resize',()=>{if(document.getElementById('page-progress').classList.contains('active'))drawWeightChart();});
+  }
+  function loadTodayForm(){const d=state.daily[isoToday()]||{};['weight','calories','protein','cardio','sleep','steps','notes'].forEach(id=>document.getElementById(id).value=d[id]??'');document.getElementById('workoutSelect').value=d.workout||'Rest';document.getElementById('creatine').checked=Boolean(d.creatine);document.getElementById('saveState').textContent=state.daily[isoToday()]?'gespeichert':'noch nicht gespeichert';}
+  function saveDaily(){
+    const date=isoToday();
+    state.daily[date]={weight:num(weight.value),calories:num(calories.value),protein:num(protein.value),cardio:num(cardio.value),sleep:num(sleep.value),steps:num(steps.value),workout:workoutSelect.value,creatine:creatine.checked,notes:notes.value.trim(),updatedAt:new Date().toISOString()};
+    persist();document.getElementById('saveState').textContent='gerade gespeichert';refreshAll();toast('Tag gespeichert');
+  }
+  function loadSettings(){for(const id of ['targetCalories','targetProtein','targetCardio','goalWeight'])document.getElementById(id).value=state.settings[id];}
+  function saveSettings(){state.settings={targetCalories:num(targetCalories.value)||2300,targetProtein:num(targetProtein.value)||200,targetCardio:num(targetCardio.value)||125,goalWeight:num(goalWeight.value)||90};persist();refreshAll();toast('Ziele gespeichert');}
+
+  function renderWorkout(){
+    const list=document.getElementById('exerciseList');list.innerHTML='';const today=isoToday();const saved=state.workouts.find(w=>w.date===today&&w.type===activeWorkout);
+    workoutTemplates[activeWorkout].forEach((ex,i)=>{
+      const [name,target,count]=ex;const card=document.createElement('div');card.className='exercise';
+      const setData=saved?.exercises?.[i]?.sets||[];
+      card.innerHTML=`<div class="exercise-head"><div><div class="exercise-name">${i+1}. ${name}</div><div class="exercise-target">${target}</div></div></div><div class="sets">${Array.from({length:count},(_,s)=>{const v=setData[s]||{};return `<div class="set-row" data-ex="${i}" data-set="${s}"><div class="set-num">${s+1}</div><input aria-label="Gewicht" class="set-weight" type="number" inputmode="decimal" step="0.5" placeholder="kg" value="${v.weight??''}"><input aria-label="Wiederholungen" class="set-reps" type="number" inputmode="numeric" placeholder="Wdh." value="${v.reps??''}"><button class="check ${v.done?'done':''}" type="button">✓</button></div>`}).join('')}</div>`;
+      list.appendChild(card);
+    });
+    list.querySelectorAll('.check').forEach(b=>b.onclick=()=>b.classList.toggle('done'));
+  }
+  function saveWorkout(){
+    const date=isoToday();const exercises=workoutTemplates[activeWorkout].map((ex,i)=>({name:ex[0],sets:[...document.querySelectorAll(`.set-row[data-ex="${i}"]`)].map(row=>({weight:num(row.querySelector('.set-weight').value),reps:num(row.querySelector('.set-reps').value),done:row.querySelector('.check').classList.contains('done')}))}));
+    state.workouts=state.workouts.filter(w=>!(w.date===date&&w.type===activeWorkout));state.workouts.push({date,type:activeWorkout,exercises,updatedAt:new Date().toISOString()});
+    const d=state.daily[date]||{};state.daily[date]={...d,workout:activeWorkout,updatedAt:new Date().toISOString()};persist();refreshAll();toast(activeWorkout+' gespeichert');
+  }
+
+  function refreshAll(){updateWeekly();updateProgress();renderHistory();}
+  function updateWeekly(){
+    const start=startOfWeek(),end=new Date(start);end.setDate(end.getDate()+7);const entries=Object.entries(state.daily).filter(([d])=>{const x=parseDate(d);return x>=start&&x<end;}).map(x=>x[1]);
+    const cardio=entries.reduce((s,x)=>s+(x.cardio||0),0);document.getElementById('weekCardio').textContent=Math.round(cardio);document.getElementById('cardioBar').style.width=Math.min(100,cardio/state.settings.targetCardio*100)+'%';
+    const workouts=new Set(entries.map(x=>x.workout).filter(x=>['Gym A','Home','Gym B'].includes(x)));document.getElementById('weekWorkouts').textContent=workouts.size;
+    const weights=lastNDailyWeights(7);if(weights.length){const avg=weights.reduce((s,x)=>s+x.weight,0)/weights.length;document.getElementById('weekWeight').textContent=fmt(avg,2)+' kg';const prev=previousAverage(weights[0].date,7);const t=document.getElementById('weekWeightTrend');if(prev!=null){const diff=avg-prev;t.textContent=`${diff<=0?'▼':'▲'} ${fmt(Math.abs(diff),2)} kg zur Vorwoche`;t.className='metric-sub '+(diff<=0?'status-good':'status-bad');}else{t.textContent='Erster Wochenwert';t.className='metric-sub';}}else{document.getElementById('weekWeight').textContent='–';document.getElementById('weekWeightTrend').textContent='Noch keine Daten';}
+  }
+  function lastNDailyWeights(n){return Object.entries(state.daily).filter(([,v])=>v.weight!=null).map(([date,v])=>({date,weight:v.weight})).sort((a,b)=>a.date.localeCompare(b.date)).slice(-n);}
+  function previousAverage(firstCurrentDate,n){const end=parseDate(firstCurrentDate),start=new Date(end);start.setDate(start.getDate()-n);const vals=Object.entries(state.daily).filter(([d,v])=>v.weight!=null&&parseDate(d)>=start&&parseDate(d)<end).map(([,v])=>v.weight);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;}
+  function updateProgress(){
+    const all=lastNDailyWeights(10000);const latest=all.at(-1);document.getElementById('latestWeight').textContent=latest?fmt(latest.weight,2)+' kg':'–';
+    if(latest){const cutoff=new Date(parseDate(latest.date));cutoff.setDate(cutoff.getDate()-30);const prior=[...all].reverse().find(x=>parseDate(x.date)<=cutoff)||all[0];const diff=latest.weight-prior.weight;document.getElementById('weightChange30').textContent=`${diff<=0?'▼':'▲'} ${fmt(Math.abs(diff),2)} kg seit ${new Intl.DateTimeFormat('de-DE',{day:'2-digit',month:'2-digit'}).format(parseDate(prior.date))}`;}
+    const start=startOfWeek(),end=new Date(start);end.setDate(end.getDate()+7);const creatineDays=Object.entries(state.daily).filter(([date,d])=>{const x=parseDate(date);return x>=start&&x<end&&d.creatine===true;}).length;document.getElementById('creatineWeek').textContent=`${creatineDays} / 7`;const takenToday=Boolean(state.daily[isoToday()]?.creatine);document.getElementById('creatineToday').textContent=takenToday?'Heute genommen ✓':'Heute noch offen';document.getElementById('creatineToday').className='metric-sub '+(takenToday?'status-good':'');
+    drawWeightChart();
+  }
+  function renderHistory(){const el=document.getElementById('historyList');const rows=Object.entries(state.daily).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,14);if(!rows.length){el.innerHTML='<div class="empty">Noch keine Tagesdaten gespeichert.</div>';return;}el.innerHTML=rows.map(([date,d])=>`<div class="history-item"><div><div class="history-date">${new Intl.DateTimeFormat('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'}).format(parseDate(date))}</div><div class="history-meta">${d.workout||'Ruhetag'} · ${d.calories??'–'} kcal · ${d.cardio??0} Min. Cardio · Creatin ${d.creatine?'✓':'–'}</div></div><div class="history-value">${d.weight!=null?fmt(d.weight,2)+' kg':'–'}</div></div>`).join('');}
+
+  function drawWeightChart(){
+    const canvas=document.getElementById('weightChart');if(!canvas||!canvas.offsetWidth)return;const dpr=Math.max(1,window.devicePixelRatio||1),w=canvas.offsetWidth,h=250;canvas.width=w*dpr;canvas.height=h*dpr;const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+    const data=lastNDailyWeights(60);if(data.length<2){ctx.fillStyle='#93a0b3';ctx.font='14px -apple-system';ctx.textAlign='center';ctx.fillText('Mindestens zwei Gewichtseinträge nötig',w/2,h/2);return;}
+    const values=data.map(x=>x.weight);const min=Math.min(...values)-.5,max=Math.max(...values)+.5;const pad={l:42,r:10,t:16,b:30};const cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;const x=i=>pad.l+i/(data.length-1)*cw;const y=v=>pad.t+(max-v)/(max-min)*ch;
+    ctx.strokeStyle='#263142';ctx.lineWidth=1;ctx.fillStyle='#93a0b3';ctx.font='11px -apple-system';ctx.textAlign='right';for(let i=0;i<4;i++){const val=max-(max-min)*i/3;const yy=y(val);ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(w-pad.r,yy);ctx.stroke();ctx.fillText(val.toFixed(1),pad.l-7,yy+4);}
+    ctx.strokeStyle='#63b3ff';ctx.lineWidth=2;ctx.beginPath();data.forEach((p,i)=>i?ctx.lineTo(x(i),y(p.weight)):ctx.moveTo(x(i),y(p.weight)));ctx.stroke();
+    ctx.fillStyle='#63b3ff';data.forEach((p,i)=>{ctx.beginPath();ctx.arc(x(i),y(p.weight),2.6,0,Math.PI*2);ctx.fill();});
+    const avgs=data.map((p,i)=>{const start=Math.max(0,i-6),slice=data.slice(start,i+1);return slice.reduce((s,z)=>s+z.weight,0)/slice.length;});ctx.strokeStyle='#7cf29a';ctx.lineWidth=3;ctx.beginPath();avgs.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));ctx.stroke();
+    ctx.fillStyle='#93a0b3';ctx.textAlign='center';const idxs=[0,Math.floor((data.length-1)/2),data.length-1];idxs.forEach(i=>ctx.fillText(new Intl.DateTimeFormat('de-DE',{day:'2-digit',month:'2-digit'}).format(parseDate(data[i].date)),x(i),h-8));
+  }
+  function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`mission-2026-backup-${isoToday()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Backup erstellt');}
+  function importData(e){const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const imported=JSON.parse(reader.result);if(!imported.settings||!imported.daily)throw new Error();const {arms: _removedArms, ...cleaned}=imported;const {weddingDate: _removedWeddingDate, ...cleanSettings}=cleaned.settings||{};state={...defaultState,...cleaned,settings:{...defaultState.settings,...cleanSettings},meta:{...defaultState.meta,...(cleaned.meta||{}),historicalWeights2026v1:true}};persist();loadTodayForm();loadSettings();renderWorkout();refreshAll();toast('Backup importiert');}catch{toast('Ungültige Backup-Datei');}e.target.value='';};reader.readAsText(file);}
+  function resetData(){if(!confirm('Wirklich alle Einträge und Trainingsdaten löschen?'))return;if(!confirm('Letzte Bestätigung: Das kann nicht rückgängig gemacht werden.'))return;state={...structuredClone(defaultState),meta:{historicalWeights2026v1:true}};persist();loadTodayForm();loadSettings();renderWorkout();refreshAll();toast('Alle Daten gelöscht');}
+  init();
+})();
+</script>
+</body>
+</html>
