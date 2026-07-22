@@ -1,21 +1,23 @@
 # Mission 2026 Progress
 
-Kostenlose, lokal speichernde iPhone-Web-App für tägliches Gewicht, Kalorien, Protein, Cardio, Creatin und den Trainingsplan Gym A / Home / Gym B.
+Kostenlose, lokal speichernde iPhone-Web-App für Daily Check-ins, Gewichtsverlauf, Creatin, Cardio und detailliertes Trainingstracking.
 
-## Version 1.2
+## Version 2.0
 
-- historische Gewichtsdaten vom 08.06.2026 bis 21.07.2026 vorinstalliert
-- fehlende Wiegungen am 12.07. und 16.07. als Notiz hinterlegt
-- Armmessung entfernt
-- Hochzeits-Countdown entfernt
-- tägliche Creatin-Checkbox ergänzt
-- bestehende lokale Einträge werden beim Update nicht überschrieben
+- finaler Trainingsplan für Gym A, Zuhause und Gym B hinterlegt
+- getrennte Eingaben rechts/links bei allen einarmigen Übungen
+- Dropsätze mit Startsatz und zwei optionalen Drop-Stufen
+- Bandstärke bei Home-Übungen protokollierbar
+- Werte des vorherigen Trainings direkt über der aktuellen Eingabe
+- vorherige Werte werden als bearbeitbare Vorlage vorausgefüllt
+- kurze Notizen pro Übung
+- bestes Gewicht, Wiederholungsrekord, bestes Set und bewegte Gesamtlast
+- Trainingshistorie und Diagramme pro Übung
+- Daily Check-in kann mehrfach am selben Tag ergänzt und zwischengespeichert werden
+- historische Gewichtsdaten vom 08.06.2026 bis 21.07.2026 enthalten
 
-## Kostenlos veröffentlichen
+## Kostenlos aktualisieren/veröffentlichen
 
-1. Alle Dateien in ein öffentliches GitHub-Repository hochladen.
-2. Unter **Settings → Pages** den Branch `main` und `/root` auswählen.
-3. Die GitHub-Pages-Adresse in Safari öffnen.
-4. **Teilen → Zum Home-Bildschirm** wählen.
+Alle Dateien im GitHub-Repository durch die aktuellen Dateien ersetzen bzw. hochladen. GitHub Pages veröffentlicht den Stand automatisch. Auf dem iPhone die Seite danach einmal vollständig neu laden; die neue Service-Worker-Version ersetzt den alten Cache.
 
 Die persönlichen Einträge werden im Browser auf dem jeweiligen Gerät gespeichert. Regelmäßig über **Daten → Backup exportieren** sichern.
